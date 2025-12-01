@@ -2,6 +2,12 @@ import aoc_utils as ut
 import collections
 import itertools
 import types
+from dataclasses import dataclass
+
+@dataclass
+class Move:
+    pos: int
+    zeros: int
 
 class Parser(ut.Parser):
 
@@ -24,18 +30,36 @@ class Solver:
         pos = []
         current = start
         for d in self.data:
-            current = (current + d) % 100
-            pos.append(current)
+            unwrapped = (current + d)
+            nxt = unwrapped % 100
+            if (unwrapped != nxt):
+                zeros = abs(unwrapped - nxt) // 100
+                if (current == 0) and (d < 0):
+                    zeros -= 1
+                if (nxt == 0) and (d > 0):
+                    zeros -= 1
+            else:
+                zeros = 0
+
+            pos.append(Move(nxt, zeros))
+            current = nxt
         return pos
 
 
     def solve_part1(self):
-        imm_pos = self.compute_positions(50)
+        moves = self.compute_positions(50)
         zeros = 0
-        for pos in imm_pos:
-            if pos == 0:
+        for m in moves:
+            if m.pos == 0:
                 zeros += 1
         return zeros
 
     def solve_part2(self):
-        pass
+        moves = self.compute_positions(50)
+        zeros = 0
+        for m in moves:
+            if m.pos == 0:
+                zeros += 1
+            if m.zeros > 0:
+                zeros += m.zeros 
+        return zeros
