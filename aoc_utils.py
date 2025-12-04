@@ -333,7 +333,11 @@ class Grid(AbstractGrid):
         for row in self.cells:
             new_row = []
             for cell in row:
-                new_row.append(cell.copy())
+                if cell is None or isinstance(cell, int) or isinstance(cell, str):
+                    new_row.append(cell)
+                else:
+                    new_row.append(cell.copy())
+                    
             res.add_row(new_row)
         return res
 
